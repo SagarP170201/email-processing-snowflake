@@ -1,0 +1,19 @@
+{
+  "email_type": "gmail_api",
+  "payload": {
+    "headers": [
+      {"name": "From", "value": "john.smith@company.com"},
+      {"name": "To", "value": "team@company.com"},
+      {"name": "Subject", "value": "Q4 Budget Planning Meeting - Action Required"},
+      {"name": "Date", "value": "Wed, 15 Nov 2023 14:30:00 -0800"}
+    ],
+    "parts": [
+      {
+        "body": {
+          "data": "Hi Team,\n\nI hope this email finds you well. I'm writing to schedule our Q4 budget planning meeting.\n\nKey agenda items:\n- Review Q3 spending analysis\n- Discuss Q4 budget allocations\n- Approve new project funding\n- Set 2024 preliminary budget targets\n\nMeeting Details:\n- Date: November 22, 2023\n- Time: 2:00 PM - 4:00 PM PST\n- Location: Conference Room A\n- Virtual link: https://company.zoom.us/j/123456789\n\nPlease prepare:\n1. Your department's Q3 spending report\n2. Q4 budget requests with justifications\n3. Preliminary 2024 goals and resource needs\n\nDeadlines:\n- Send budget requests by November 20th\n- Complete Q3 reports by November 19th\n\nThis is a critical meeting for our financial planning. Please confirm your attendance by responding to this email.\n\nIf you have any questions, please don't hesitate to reach out to me at john.smith@company.com or call me at (555) 123-4567.\n\nBest regards,\nJohn Smith\nFinance Director\nCompany Inc.\n\nP.S. Coffee and snacks will be provided during the meeting."
+        }
+      }
+    ]
+  },
+  "internalDate": "1700083800000"
+}

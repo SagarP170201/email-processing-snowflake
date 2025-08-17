@@ -1,0 +1,10 @@
+{
+  "email_type": "simple_format",
+  "sender": "sarah.johnson@clientcorp.com",
+  "recipients": ["support@company.com"],
+  "subject": "Urgent: System Outage Affecting Production",
+  "email_date": "2023-11-16T09:15:00Z",
+  "email_text": "Dear Support Team,\n\nWe are experiencing a critical system outage that is affecting our production environment. The issue started at approximately 8:45 AM EST this morning.\n\nImpact:\n- All customer-facing applications are down\n- Payment processing is offline\n- Customer data access is limited\n- Estimated revenue loss: $10,000 per hour\n\nImmediate actions needed:\n1. Activate emergency response protocol\n2. Engage senior technical team\n3. Provide hourly status updates\n4. Prepare customer communication\n\nPriority Level: CRITICAL\nExpected Resolution: Within 2 hours\n\nPlease call me immediately at (555) 987-6543 or email me back with your action plan.\n\nThis is causing significant business disruption and needs immediate attention.\n\nUrgently,\nSarah Johnson\nIT Operations Manager\nClient Corp\nsarah.johnson@clientcorp.com",
+  "attachments": [],
+  "priority": "high"
+}

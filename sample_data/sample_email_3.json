@@ -1,0 +1,14 @@
+{
+  "email_type": "marketing",
+  "sender": "marketing@techsolutions.com",
+  "recipients": ["subscribers@company.com"],
+  "subject": "New Product Launch: AI Analytics Platform - Special Pricing",
+  "email_date": "2023-11-16T11:00:00Z",
+  "email_text": "Hello!\n\nWe're excited to announce the launch of our revolutionary AI Analytics Platform!\n\nKey Features:\n✓ Real-time data processing\n✓ Advanced machine learning algorithms\n✓ Interactive dashboards\n✓ Seamless integration with existing systems\n✓ 99.9% uptime guarantee\n\nSpecial Launch Pricing:\n- Starter Plan: $99/month (was $149)\n- Professional Plan: $299/month (was $399)\n- Enterprise Plan: $799/month (was $999)\n\nLimited time offer - expires December 31, 2023!\n\nWhat our beta customers are saying:\n\"This platform has transformed how we analyze our data. The insights are incredible!\" - TechCorp CEO\n\n\"Implementation was seamless and support is outstanding.\" - DataFlow CTO\n\nReady to revolutionize your analytics?\n\n[CLAIM YOUR DISCOUNT] - Use code LAUNCH50 for additional 50% off first month\n\nQuestions? Reply to this email or call our sales team at 1-800-ANALYTICS.\n\nBest regards,\nThe TechSolutions Marketing Team\n\nP.S. Follow us on LinkedIn for daily insights and tips!\n\n---\nTechSolutions Inc.\n123 Innovation Drive, Tech City, CA 94000\nUnsubscribe | Privacy Policy | Terms of Service",
+  "attachments": [
+    {"name": "product_brochure.pdf", "size": 2048000},
+    {"name": "pricing_details.xlsx", "size": 512000}
+  ],
+  "priority": "normal",
+  "campaign_id": "LAUNCH_2023_Q4"
+}
