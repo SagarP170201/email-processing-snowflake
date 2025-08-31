@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Automated Email Processing Pipeline Deployment Script
-# Deploys complete real-time automation on top of existing foundation
+# 📧 Deploy Gmail Integration Email Processing Application to Snowflake  
+# This script deploys the native Snowflake email processing system
 
 set -e
 
-echo "🚀 Starting Automated Email Processing Pipeline Deployment..."
+echo "📧 Deploying Gmail Integration Email Processing App"
+echo "================================================="
 
 # Check if snowsql is available
 if ! command -v snowsql &> /dev/null; then
@@ -37,141 +38,82 @@ execute_sql() {
         echo "✅ $description completed successfully"
     else
         echo "❌ $description failed"
-        exit 1
+        echo "ℹ️  Continuing with next step..."
     fi
 }
 
-echo "🏗️  Deploying Real-Time Automation Components..."
+echo "🏗️  Deploying Core Email Processing Components..."
 
-# Step 1: Deploy real-time ingestion (Snowpipe + Notifications)
-echo "📡 Setting up real-time ingestion..."
-execute_sql "automation/real_time_ingestion.sql" "Configuring Snowpipe and S3 notifications"
+# Step 1: Deploy database setup
+echo "📊 Setting up database structure..."
+execute_sql "setup/01_database_setup.sql" "Creating database, schema, and core tables"
 
-# Step 2: Deploy stream and task automation
-echo "🔄 Setting up stream processing..."
+# Step 2: Deploy AI functions
+echo "🤖 Setting up Cortex AI functions..."
+execute_sql "cortex/03_ai_summarization.sql" "Deploying AI summarization functions"
+
+# Step 3: Deploy email parsing
+echo "📧 Setting up email parsing..."
+execute_sql "setup/05_enhanced_email_parsing.sql" "Configuring email parsing procedures"
+
+# Step 4: Deploy automation
+echo "🔄 Setting up automation..."
 execute_sql "automation/stream_task_automation.sql" "Creating streams and automated tasks"
 
-# Step 3: Deploy simple monitoring
-echo "📊 Setting up simple monitoring..."
+# Step 5: Deploy monitoring
+echo "📊 Setting up monitoring..."
 execute_sql "monitoring/simple_monitoring.sql" "Configuring basic monitoring system"
 
-# Configuration prompts
 echo ""
-echo "🔧 Configuration Required:"
+echo "🎉 Core Deployment Complete!"
+echo ""
+echo "📋 Next Steps for Production:"
 echo ""
 
-# S3 Configuration
-echo "📦 S3 Configuration:"
-read -p "Enter your S3 bucket name for email files: " S3_BUCKET
-read -p "Enter AWS region [us-east-1]: " AWS_REGION
-AWS_REGION=${AWS_REGION:-us-east-1}
-
-# Update configuration files
-echo "📝 Updating configuration files..."
-
-# Update Gmail config with user inputs
-sed -i.bak "s/your-email-processing-bucket/$S3_BUCKET/g" "email_sources/gmail_config.json"
-sed -i.bak "s/us-east-1/$AWS_REGION/g" "email_sources/gmail_config.json"
-
-# Email source configuration
+echo "1. 📧 Deploy Streamlit App to Snowflake:"
+echo "   PUT file://streamlit/sample_email_app.py @EMAIL_APP_STAGE;"
+echo "   CREATE STREAMLIT EMAIL_PROCESSING_APP"
+echo "       ROOT_LOCATION = '@EMAIL_APP_STAGE'"
+echo "       MAIN_FILE = 'sample_email_app.py';"
 echo ""
-echo "📧 Email Source Configuration:"
-read -p "Enter target domain(s) to monitor (comma separated) [company.com]: " TARGET_DOMAINS
-TARGET_DOMAINS=${TARGET_DOMAINS:-company.com}
 
-read -p "Enter max emails per run [50]: " MAX_EMAILS
-MAX_EMAILS=${MAX_EMAILS:-50}
+echo "2. 🔗 Gmail API Integration:"
+echo "   - Set up Gmail API credentials (see production/gmail_sis_integration.md)"
+echo "   - Deploy Gmail Python UDF"
+echo "   - Configure automated email fetching task"
+echo ""
 
-# Update Gmail config with email settings
-cat > temp_config.json << EOF
-{
-  "target_domains": ["$(echo $TARGET_DOMAINS | sed 's/,/","/g')"],
-  "max_emails_per_run": $MAX_EMAILS,
-  "processing_interval_minutes": 5,
-  "s3_bucket": "$S3_BUCKET",
-  "aws_region": "$AWS_REGION",
-  "snowflake_user": "SPAWAR",
-  "snowflake_account": "SFSEAPAC-SPAWAR_AWSEAST1",
-  "snowflake_warehouse": "COMPUTE_WH",
-  "email_filters": {
-    "include_keywords": ["budget", "meeting", "urgent", "action", "deadline"],
-    "exclude_keywords": ["spam", "newsletter", "unsubscribe"],
-    "date_range_days": 30,
-    "include_attachments": true
-  },
-  "processing_options": {
-    "enable_urgent_alerts": true,
-    "enable_duplicate_detection": true,
-    "max_content_length": 50000,
-    "enable_sentiment_analysis": true,
-    "enable_entity_extraction": false
-  },
-  "monitoring": {
-    "enable_metrics_logging": true,
-    "alert_thresholds": {
-      "processing_latency_seconds": 300,
-      "error_rate_percentage": 5,
-      "queue_depth": 100
-    }
-  }
-}
-EOF
+echo "3. ⚡ Enable Automation:"
+echo "   snowsql -c $CONNECTION -q \"ALTER TASK GMAIL_PROCESSING_TASK RESUME\""
+echo ""
 
-mv temp_config.json email_sources/gmail_config.json
-
-# Install Python dependencies for automation
-echo "📦 Installing Python dependencies..."
-cd email_sources
-pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client boto3
-cd ..
-
-# Generate AWS setup instructions
-echo ""
-echo "🎉 Automated Pipeline Deployment Complete!"
-echo ""
-echo "📋 Next Steps Required:"
-echo ""
-echo "1. 📧 Gmail API Setup:"
-echo "   - Go to: https://console.cloud.google.com/"
-echo "   - Enable Gmail API"
-echo "   - Create OAuth 2.0 credentials"
-echo "   - Download credentials.json to email_sources/ folder"
-echo ""
-echo "2. 🛡️ AWS S3 Setup:"
-echo "   - Create S3 bucket: $S3_BUCKET"
-echo "   - Configure S3 Event Notifications → SQS"
-echo "   - Get SQS ARN from: DESCRIBE NOTIFICATION INTEGRATION EMAIL_S3_NOTIFICATION;"
-echo ""
-echo "3. ⚡ Enable Real-Time Processing:"
-echo "   snowsql -c $CONNECTION -q \"CALL MANAGE_AUTOMATION_TASKS('RESUME', 'ALL')\""
-echo ""
-echo "4. 🧪 Test Gmail Connector:"
-echo "   cd email_sources"
-echo "   python gmail_connector.py"
-echo ""
-echo "5. 📊 Launch Monitoring Dashboard:"
+echo "4. 🧪 Test the Demo:"
 echo "   cd streamlit"
-echo "   streamlit run realtime_monitoring_app.py"
+echo "   streamlit run sample_email_app.py"
 echo ""
+
 echo "📈 What You Now Have:"
-echo "   ✅ Real-time S3 ingestion (Snowpipe)"
-echo "   ✅ Stream-based processing (1-minute latency)"
-echo "   ✅ Automated AI analysis"
-echo "   ✅ Urgent email detection"
-echo "   ✅ Gmail API connector"
+echo "   ✅ Native Snowflake email processing"
+echo "   ✅ Streamlit-in-Snowflake ready deployment"
+echo "   ✅ Gmail API integration framework"
+echo "   ✅ Cortex AI analysis pipeline"
+echo "   ✅ Stream-based automation"
 echo "   ✅ Simple monitoring dashboard"
-echo "   ✅ Basic error tracking"
 echo ""
-echo "🎯 Pipeline Flow:"
-echo "   Gmail → Python Connector → S3 Upload → Snowpipe → Streams → Tasks → AI Analysis → Alerts"
+
+echo "🎯 Architecture:"
+echo "   Gmail API → Python UDF → Snowflake Tables → Cortex AI → Streamlit Native"
 echo ""
+
 echo "💰 Token Usage:"
-echo "   - Real-time processing: ~2-3 tokens per email"
-echo "   - Batch optimization available for cost savings"
+echo "   - Demo processing: ~1 token per email"
+echo "   - Production optimization: Batch processing available"
 echo ""
-echo "📚 Documentation:"
+
+echo "📚 Key Documentation:"
 echo "   - README.md: Complete usage guide"
-echo "   - monitoring/: SQL monitoring queries"
-echo "   - email_sources/: Gmail connector and config"
+echo "   - production/gmail_sis_integration.md: Production deployment"
+echo "   - production/why_streamlit_not_spcs.md: Architecture rationale"
 echo ""
-echo "Happy automated email processing! 📧🤖⚡"
+
+echo "🚀 Happy Gmail integration with Snowflake! 📧🤖✨"

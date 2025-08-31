@@ -1,353 +1,277 @@
-# 🤖 Fully Automated Real-Time Email Processing with Snowflake Cortex AI
+# 📧 Gmail Integration with Snowflake Cortex AI
 
-A **comprehensive real-time email processing system** that automatically ingests emails from Gmail, processes them instantly using Snowflake Streams and Tasks, and generates AI-powered insights using Snowflake Cortex AI functions.
+A **native Snowflake email processing system** that integrates Gmail API via Python UDFs, processes emails using Streamlit-in-Snowflake, and generates AI-powered insights with Snowflake Cortex functions.
 
 ## 🚀 Key Features
 
-### 🔄 **Fully Automated Pipeline**
-- **Real-time Ingestion**: Snowpipe + S3 event notifications for instant email processing (<1 minute latency)
-- **Gmail API Integration**: Direct connection to Gmail for automatic domain-specific email fetching
-- **Stream-based Processing**: Automatic email parsing triggered by new file arrivals using Snowflake Streams
-- **Intelligent Task Orchestration**: Automated AI analysis with smart scheduling and resource management
-- **Urgent Email Detection**: Automatic flagging and real-time alerting for time-sensitive emails
+### 🔄 **Native Snowflake Architecture**
+- **Gmail API Integration**: Python UDF-based email fetching (no external infrastructure)
+- **Streamlit-in-Snowflake**: Native dashboard with built-in enterprise authentication
+- **Direct Table Processing**: Real-time email ingestion without external staging
+- **Stream-based Analysis**: Automatic AI processing triggered by new emails
+- **Urgent Email Detection**: Intelligent priority flagging and real-time alerting
 
 ### 🎯 **AI-Powered Analysis** 
-- **Multi-format Email Support**: Gmail API JSON, Outlook/Exchange, simple JSON, marketing emails, raw text
-- **Snowflake Cortex AI**: Summarization, sentiment analysis, classification, and entity extraction
-- **Token-Optimized Processing**: Smart content limits and batch processing for cost efficiency
-- **Intelligent Classification**: Automatic categorization (urgent, informational, action required, etc.)
+- **Snowflake Cortex AI**: Summarization, sentiment analysis, and classification
+- **Token-Optimized Processing**: Smart content limits for cost efficiency
+- **Multi-format Support**: Gmail API JSON, simple JSON, raw text
+- **Intelligent Classification**: Automatic urgency detection and prioritization
 
-### 📊 **Comprehensive Monitoring**
-- **Real-time Dashboard**: Live monitoring of ingestion, processing, and AI analysis
-- **Intelligent Alerting**: Automated system health monitoring with customizable thresholds
-- **Performance Analytics**: Processing latency, throughput, error rate, and token usage tracking
-- **Pipeline Visualization**: End-to-end flow monitoring from Gmail to AI insights
+### 📊 **Real-time Dashboard**
+- **Live Email Analytics**: Real-time processing metrics and insights
+- **Gmail Integration Status**: Connection health and sync monitoring
+- **AI Analysis Results**: Summaries, sentiment scores, and urgency levels
+- **System Health Monitoring**: Pipeline status and error tracking
 
 ## 📋 Prerequisites
 
 - Snowflake account with Cortex AI enabled
-- AWS S3 bucket (for external staging)
-- Python 3.8+ (for Streamlit app)
+- Gmail API access (for production) or demo simulation  
+- Python 3.8+ (for local development/testing)
 - Appropriate Snowflake warehouse permissions
 
-## 🏗️ Architecture Overview
+## 🏗️ Native Snowflake Architecture
 
 ```
-Email Sources → S3 Staging → Snowflake Ingestion → AI Processing → Streamlit Dashboard
-     ↓              ↓              ↓                    ↓              ↓
-  Gmail API      External       Raw Email           Cortex AI      Interactive
-  Outlook API    Stage          Files Table         Functions      Visualization
-  .eml files     Internal       ↓                   ↓              ↓
-  .msg files     Stage          Processed           Email          Search &
-  .json files                   Emails Table        Summaries      Analytics
+Gmail API → Python UDF → Snowflake Tables → Cortex AI → Streamlit-in-Snowflake
+     ↓           ↓              ↓              ↓              ↓
+sagar.pawar@  FETCH_GMAIL    Raw Email      AI Analysis    Native Dashboard
+snowflake.com  EMAILS()      Files Table    Functions      Built-in Auth
+Domain Filter      ↓              ↓              ↓              ↓
+5-min Sync    Direct Insert  Processed      Email          Interactive
+Automation    (No S3 needed) Emails Table   Summaries      Analytics
 ```
 
-## 🛠️ Installation & Setup
+**Benefits of Native Approach:**
+- ✅ **No external infrastructure** (S3, Lambda, etc.)
+- ✅ **Built-in authentication** (no secrets.toml in production)
+- ✅ **Cost efficient** (only warehouse compute)
+- ✅ **Enterprise security** (native Snowflake)
+
+## 🛠️ Quick Start
 
 ### 1. Database Setup
-
-Execute the SQL scripts in order:
-
 ```bash
-# 1. Create database structure
+# Deploy core Snowflake objects
 snowsql -f setup/01_database_setup.sql
-
-# 2. Set up staging areas
-snowsql -f setup/02_staging_setup.sql
-
-# 3. Configure AI summarization
 snowsql -f cortex/03_ai_summarization.sql
-
-# 4. Set up automation (optional)
-snowsql -f automation/04_automation_setup.sql
+snowsql -f automation/stream_task_automation.sql
 ```
 
-### 2. Configure S3 Integration
-
-Update the S3 stage configuration in `02_staging_setup.sql`:
-
-```sql
-CREATE OR REPLACE STAGE EMAIL_S3_STAGE
-URL = 's3://your-email-bucket/email-files/'
-CREDENTIALS = (AWS_KEY_ID = 'your_access_key' AWS_SECRET_KEY = 'your_secret_key')
--- OR use IAM role:
--- CREDENTIALS = (AWS_ROLE = 'arn:aws:iam::your-account:role/your-snowflake-role')
-```
-
-### 3. Streamlit App Setup
-
+### 2. Demo Setup (Immediate)
 ```bash
 cd streamlit
 pip install -r requirements.txt
 
-# Configure Snowflake credentials
-cp .streamlit/secrets.toml.template .streamlit/secrets.toml
-# Edit secrets.toml with your Snowflake credentials
-
-# Run the app
-streamlit run app.py
+# Configure Snowflake credentials in .streamlit/secrets.toml
+streamlit run sample_email_app.py
 ```
 
-### 4. Configure Snowflake Secrets
-
-Edit `.streamlit/secrets.toml`:
-
-```toml
-[snowflake]
-user = "your_snowflake_username"
-password = "your_snowflake_password"
-account = "your_snowflake_account"
-warehouse = "your_warehouse"
-database = "EMAIL_PROCESSING_APP"
-schema = "CORE"
-```
-
-## 📧 Supported Email Formats
-
-The app supports multiple email formats:
-
-### JSON Format (Gmail API)
-```json
-{
-  "payload": {
-    "headers": [
-      {"name": "From", "value": "sender@example.com"},
-      {"name": "Subject", "value": "Meeting Tomorrow"}
-    ],
-    "parts": [
-      {"body": {"data": "Email content here..."}}
-    ]
-  },
-  "internalDate": "1640995200000"
-}
-```
-
-### Simple Text Format
-```json
-{
-  "email_text": "Email content as plain text...",
-  "metadata": {
-    "sender": "sender@example.com",
-    "subject": "Email subject"
-  }
-}
-```
-
-### EML/MSG Files
-- Standard .eml and .msg files are supported
-- Automatically parsed for headers and content
-
-## 🤖 AI Features
-
-### Summary Types
-
-1. **Brief Summary**: 2-3 sentence overview
-2. **Detailed Summary**: Comprehensive analysis
-3. **Action Items**: Extracted tasks and deadlines
-4. **Sentiment Analysis**: Emotional tone scoring
-
-### Classification Categories
-
-- URGENT
-- INFORMATIONAL  
-- ACTION_REQUIRED
-- MEETING_REQUEST
-- MARKETING
-- SUPPORT
-- PERSONAL
-- OTHER
-
-### Entity Extraction
-
-Automatically identifies:
-- Person names
-- Company names
-- Dates and deadlines
-- Locations
-- Monetary amounts
-- Phone numbers
-- Email addresses
-
-## 📊 Usage Examples
-
-### Manual Processing
-
+### 3. Production Deployment (Streamlit-in-Snowflake)
 ```sql
--- Ingest files from S3
-CALL INGEST_EMAIL_FILES('S3', '.*\.json');
+-- Upload your Streamlit app
+PUT file://sample_email_app.py @EMAIL_APP_STAGE;
 
--- Process specific email
-CALL ANALYZE_EMAIL_WITH_AI('email_id_here');
+-- Create native Streamlit app
+CREATE STREAMLIT EMAIL_PROCESSING_APP
+    ROOT_LOCATION = '@EMAIL_APP_STAGE'
+    MAIN_FILE = 'sample_email_app.py'
+    QUERY_WAREHOUSE = COMPUTE_WH;
 
--- Batch analyze emails
-CALL BATCH_ANALYZE_EMAILS(10, 'ALL');
+-- Deploy Gmail API UDF (see production/gmail_sis_integration.md)
+CREATE FUNCTION FETCH_GMAIL_EMAILS(domain STRING) ...;
+
+-- Enable automation
+ALTER TASK GMAIL_PROCESSING_TASK RESUME;
 ```
 
-### Search and Analytics
+## 📧 Gmail Integration Methods
 
+### 🎯 **Production (Recommended)**
+- **Python UDF**: Gmail API calls inside Snowflake
+- **Streamlit-in-Snowflake**: Native deployment
+- **Task Automation**: Scheduled email fetching
+
+### 🎬 **Demo (Current Implementation)**
+- **Simulated Gmail**: Realistic email data
+- **External Streamlit**: Local development
+- **Manual Processing**: Interactive demo workflow
+
+### 🔄 **Alternative Approaches**
+- **IMAP Integration**: Direct Gmail IMAP access (no API setup)
+- **Webhook Forwarding**: Real-time email forwarding to Snowflake
+- **Email Simulation**: Realistic test data for demonstrations
+
+## 🤖 AI Processing Features
+
+### Cortex AI Functions Used
+1. **SUMMARIZE**: Email content summarization
+2. **SENTIMENT**: Emotional tone analysis
+3. **CLASSIFY**: Urgency level detection
+
+### Intelligent Processing
+- **Priority Detection**: HIGH/MEDIUM/LOW urgency classification
+- **Domain Filtering**: Focus on specific email domains (e.g., snowflake.com)
+- **Real-time Analysis**: Immediate AI processing of new emails
+
+## 📊 Demo Usage
+
+### Current Demo Features
+```bash
+# Run the Gmail integration demo
+cd streamlit
+streamlit run sample_email_app.py
+
+# Features available:
+- Gmail API simulation with realistic emails
+- Live Cortex AI processing
+- Interactive dashboard with analytics
+- Production architecture demonstration
+```
+
+### Demo Talk Track
+> "This demonstrates Gmail API integration pulling emails from sagar.pawar@snowflake.com, filtering for snowflake.com domain emails, automatically detecting urgency levels, and processing everything with Cortex AI in real-time. In production, this same Streamlit app deploys natively to Snowflake with Python UDF Gmail integration and automated task scheduling."
+
+## 🚀 Production Deployment
+
+### Streamlit-in-Snowflake Approach
 ```sql
--- Semantic search
-SELECT * FROM TABLE(SEARCH_EMAILS_SEMANTIC('budget planning meetings', 5));
+-- 1. Deploy Gmail UDF
+CREATE FUNCTION FETCH_GMAIL_EMAILS(domain STRING)
+RETURNS ARRAY
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.9'
+PACKAGES = ('google-api-python-client')
+HANDLER = 'gmail_fetch_handler'
+AS $$ ... $$;
 
--- View comprehensive insights
-SELECT * FROM EMAIL_AI_INSIGHTS 
-WHERE email_classification = 'ACTION_REQUIRED'
-ORDER BY email_date DESC;
+-- 2. Deploy Streamlit app
+PUT file://sample_email_app.py @EMAIL_APP_STAGE;
+CREATE STREAMLIT EMAIL_PROCESSING_APP
+    ROOT_LOCATION = '@EMAIL_APP_STAGE'
+    MAIN_FILE = 'sample_email_app.py';
+
+-- 3. Automate email fetching
+CREATE TASK GMAIL_AUTOMATION
+    SCHEDULE = 'USING CRON 0 */5 * * * UTC'
+AS SELECT FETCH_GMAIL_EMAILS('snowflake.com');
 ```
 
-### Automation Management
+### Production Benefits
+- ✅ **Same code** as demo (no rewrite needed)
+- ✅ **Enterprise authentication** (built-in Snowflake SSO)
+- ✅ **Auto-scaling compute** (warehouse management)
+- ✅ **Zero external infrastructure** (no S3, Lambda, containers)
 
-```sql
--- Suspend all automation
-CALL MANAGE_AUTOMATION('SUSPEND', 'ALL');
+## 📁 Repository Structure
 
--- Resume specific task
-CALL MANAGE_AUTOMATION('RESUME', 'AUTO_INGEST_EMAILS');
-
--- Check automation status
-SELECT * FROM AUTOMATION_MONITORING;
+```
+email_processing_app/
+├── streamlit/
+│   ├── sample_email_app.py          # Main demo application
+│   ├── simple_monitoring_app.py     # System monitoring dashboard
+│   └── requirements.txt             # Python dependencies
+├── setup/
+│   ├── 01_database_setup.sql        # Core database objects
+│   └── 05_enhanced_email_parsing.sql # Email processing functions
+├── cortex/
+│   └── 03_ai_summarization.sql      # Cortex AI functions
+├── automation/
+│   ├── stream_task_automation.sql   # Automated processing tasks
+│   └── 04_automation_setup.sql      # Task scheduling setup
+├── email_sources/
+│   ├── gmail_connector.py           # Production Gmail integration
+│   ├── gmail_workarounds.py         # Demo Gmail implementation
+│   └── gmail_config.json           # Gmail API configuration
+├── production/
+│   ├── gmail_sis_integration.md     # Production deployment guide
+│   ├── streamlit_native_approach.md # Why Streamlit > SPCS
+│   └── production_ready_app.py      # Production app template
+└── sample_data/
+    ├── gmail_demo_1.json           # Sample Gmail format emails
+    ├── gmail_demo_2.json
+    └── gmail_demo_3.json
 ```
 
-## 🔄 Automation Features
+## 🔍 Why Native Snowflake Over S3?
 
-### Available Tasks
+### ✅ **Native Snowflake Advantages:**
+- **Simpler**: No external storage management
+- **Cheaper**: Only warehouse compute costs
+- **Faster**: Direct table access, no staging delays  
+- **Secure**: Everything stays in Snowflake ecosystem
 
-1. **AUTO_INGEST_EMAILS**: Ingests new files every 2 hours
-2. **AUTO_PROCESS_EMAILS**: Processes newly ingested emails
-3. **AUTO_AI_ANALYSIS**: Generates AI summaries
-4. **AUTO_MAINTENANCE**: Weekly cleanup and optimization
-5. **AUTO_MONITOR_FAILURES**: Monitors for failed jobs
-6. **REALTIME_EMAIL_PROCESSOR**: Stream-based real-time processing
+### ❌ **S3 Approach Drawbacks:**
+- **Complex**: S3 + Snowpipe + IAM roles + SQS
+- **Expensive**: Storage + transfer + compute costs
+- **Slower**: File upload → event → processing lag
+- **More failure points**: External dependencies
 
-### Scheduling Options
-
-- **Time-based**: CRON expressions for regular intervals
-- **Event-based**: Stream triggers for real-time processing
-- **Dependency-based**: Tasks that run after other tasks complete
-
-## 📈 Monitoring & Analytics
-
-### Key Metrics Dashboard
-
-- Total emails processed
-- Recent uploads (24h)
-- Pending processing count
-- AI summaries generated
-- Processing status distribution
-- Sentiment trends over time
-
-### Processing Jobs Tracking
-
-All operations are logged in the `PROCESSING_JOBS` table:
-
-```sql
-SELECT 
-    job_type,
-    COUNT(*) as total_jobs,
-    AVG(files_processed) as avg_files_per_job,
-    SUM(CASE WHEN status = 'FAILED' THEN 1 ELSE 0 END) as failed_jobs
-FROM PROCESSING_JOBS 
-WHERE start_time >= CURRENT_TIMESTAMP() - INTERVAL '7 DAYS'
-GROUP BY job_type;
-```
-
-## 🔍 SharePoint Connector Analysis
-
-We've evaluated the Snowflake OpenFlow SharePoint Connector for this use case:
-
-### When to Use SharePoint Connector:
-- Emails already stored in SharePoint
-- Microsoft 365 ecosystem integration
-- Need SharePoint metadata preservation
-
-### When to Use S3 Approach (Recommended):
-- Multiple email sources
-- Various email formats
-- Cost-effective large-scale processing
-- Custom preprocessing requirements
-
-**Recommendation**: The S3-based approach provides better flexibility and cost-effectiveness for most email processing scenarios.
+**Result**: Native approach is optimal for email processing workflows.
 
 ## 🚨 Troubleshooting
 
 ### Common Issues
 
-1. **Cortex AI Functions Not Available**
-   - Ensure your Snowflake account has Cortex enabled
-   - Check region availability for Cortex services
+1. **Connection Timeout**
+   - App auto-refreshes expired Snowflake connections
+   - Clear Streamlit cache if needed: `st.cache_resource.clear()`
 
-2. **S3 Access Errors**
-   - Verify IAM permissions
-   - Check storage integration configuration
-   - Validate S3 bucket and file paths
+2. **Gmail Integration**
+   - **Demo**: Uses realistic email simulation
+   - **Production**: Requires Gmail API UDF deployment
+   - **Alternative**: IMAP integration available
 
-3. **Task Execution Failures**
-   - Check warehouse availability and size
-   - Review task dependencies
-   - Monitor resource usage
+3. **Cortex AI Processing**
+   - Ensure Cortex AI is enabled in your Snowflake account
+   - Check token usage limits for your account tier
 
-### Performance Optimization
+## 🎯 Demo Instructions
 
-1. **Warehouse Sizing**
-   - Use larger warehouses for batch processing
-   - Consider auto-suspend/resume settings
+### Run the Demo
+```bash
+# Navigate to project
+cd email_processing_app/streamlit
 
-2. **Batch Processing**
-   - Process emails in batches of 50-100
-   - Use pagination for large datasets
+# Install dependencies
+pip install -r requirements.txt
 
-3. **Storage Optimization**
-   - Archive old processed emails
-   - Clean up intermediate files
-   - Use appropriate data types
+# Configure Snowflake credentials in .streamlit/secrets.toml
+# Run the app
+streamlit run sample_email_app.py
+```
 
-## 📝 API Reference
+### Demo Features
+- **Gmail API Simulation**: Realistic email processing workflow
+- **Live Cortex AI**: Real AI summarization and sentiment analysis
+- **Interactive Dashboard**: Process emails and view results instantly
+- **Production Preview**: Shows exactly what production deployment looks like
 
-### Key Stored Procedures
+## 📈 Future Enhancements
 
-- `INGEST_EMAIL_FILES(stage_name, file_pattern)`
-- `PROCESS_EMAIL_FORMAT(file_id, email_content)`
-- `ANALYZE_EMAIL_WITH_AI(email_id)`
-- `BATCH_ANALYZE_EMAILS(limit_count, status_filter)`
-- `MANAGE_AUTOMATION(action, task_name)`
-
-### Key Functions
-
-- `SUMMARIZE_EMAIL(email_content, summary_type)`
-- `CLASSIFY_EMAIL(email_content, subject)`
-- `EXTRACT_EMAIL_ENTITIES(email_content)`
-- `SEARCH_EMAILS_SEMANTIC(search_query, limit_count)`
-
-### Key Views
-
-- `EMAIL_PROCESSING_OVERVIEW`: High-level processing status
-- `EMAIL_AI_INSIGHTS`: Comprehensive AI analysis results
-- `AUTOMATION_MONITORING`: Task execution monitoring
+- **Real Gmail API**: Production Python UDF integration
+- **Advanced Analytics**: Email trend analysis and insights
+- **Multi-domain Support**: Process emails from multiple domains
+- **Alert Notifications**: Slack/Teams integration for urgent emails
+- **Email Response AI**: Cortex-powered email drafting assistance
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Test your changes thoroughly
-4. Submit a pull request with detailed description
+2. Create a feature branch  
+3. Test changes with the demo app
+4. Submit pull request with demo screenshots
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see LICENSE file for details.
 
 ## 🆘 Support
 
-For support and questions:
-1. Check the troubleshooting section
-2. Review Snowflake Cortex documentation
-3. Open an issue in the repository
-4. Contact your Snowflake support team for account-specific issues
+- **Demo Issues**: Check Streamlit app logs and Snowflake connection
+- **Production Questions**: See `production/gmail_sis_integration.md`
+- **Architecture Questions**: See `production/why_streamlit_not_spcs.md`
 
-## 🔮 Future Enhancements
+---
 
-- **Multi-language Support**: Process emails in different languages
-- **Advanced Analytics**: Trend analysis and predictive insights  
-- **Integration APIs**: REST APIs for external system integration
-- **Custom AI Models**: Fine-tuned models for specific use cases
-- **Real-time Notifications**: Slack/Teams integration for alerts
-- **Email Response Generation**: AI-powered email drafting
+**🎯 Perfect for demonstrating Gmail integration with Snowflake Cortex AI!** ✅

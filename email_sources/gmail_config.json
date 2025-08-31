@@ -2,14 +2,15 @@
   "target_domains": ["snowflake.com"],
   "max_emails_per_run": 10,
   "processing_interval_minutes": 5,
-  "s3_bucket": "your-email-processing-bucket",
-  "aws_access_key": "your_aws_access_key",
-  "aws_secret_key": "your_aws_secret_key", 
-  "aws_region": "us-east-1",
   "snowflake_user": "SPAWAR",
-  "snowflake_password": "your_password",
-  "snowflake_account": "SFSEAPAC-SPAWAR_AWSEAST1",
+  "snowflake_account": "SFSEAPAC-SPAWAR_AWSEAST1", 
   "snowflake_warehouse": "COMPUTE_WH",
+  "gmail_integration": {
+    "method": "python_udf",
+    "target_email": "sagar.pawar@snowflake.com",
+    "deployment": "streamlit_in_snowflake",
+    "authentication": "service_account_json"
+  },
   "email_filters": {
     "include_keywords": ["meeting", "urgent", "action", "deadline", "project", "client", "demo"],
     "exclude_keywords": ["newsletter", "unsubscribe", "marketing", "promotional"],
