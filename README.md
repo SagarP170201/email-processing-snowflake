@@ -1,17 +1,27 @@
-# Email Processing & AI Summarization App
+# 🤖 Fully Automated Real-Time Email Processing with Snowflake Cortex AI
 
-A comprehensive Snowflake application that ingests email files from S3 staging areas and uses Snowflake Cortex AI to generate intelligent summaries and insights.
+A **comprehensive real-time email processing system** that automatically ingests emails from Gmail, processes them instantly using Snowflake Streams and Tasks, and generates AI-powered insights using Snowflake Cortex AI functions.
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **Multi-Source Email Ingestion**: Support for S3 external stages and internal directory stages
-- **AI-Powered Summarization**: Uses Snowflake Cortex for brief summaries, detailed analysis, action item extraction, and sentiment analysis
-- **Email Classification**: Automatic categorization of emails (urgent, informational, action required, etc.)
-- **Entity Extraction**: Identifies people, companies, dates, locations, and contact information
-- **Semantic Search**: AI-powered search across email content
-- **Real-time Processing**: Stream-based processing for immediate analysis
-- **Automated Workflows**: Time-based automation for hands-off operation
-- **Interactive Dashboard**: Streamlit-based web interface for management and visualization
+### 🔄 **Fully Automated Pipeline**
+- **Real-time Ingestion**: Snowpipe + S3 event notifications for instant email processing (<1 minute latency)
+- **Gmail API Integration**: Direct connection to Gmail for automatic domain-specific email fetching
+- **Stream-based Processing**: Automatic email parsing triggered by new file arrivals using Snowflake Streams
+- **Intelligent Task Orchestration**: Automated AI analysis with smart scheduling and resource management
+- **Urgent Email Detection**: Automatic flagging and real-time alerting for time-sensitive emails
+
+### 🎯 **AI-Powered Analysis** 
+- **Multi-format Email Support**: Gmail API JSON, Outlook/Exchange, simple JSON, marketing emails, raw text
+- **Snowflake Cortex AI**: Summarization, sentiment analysis, classification, and entity extraction
+- **Token-Optimized Processing**: Smart content limits and batch processing for cost efficiency
+- **Intelligent Classification**: Automatic categorization (urgent, informational, action required, etc.)
+
+### 📊 **Comprehensive Monitoring**
+- **Real-time Dashboard**: Live monitoring of ingestion, processing, and AI analysis
+- **Intelligent Alerting**: Automated system health monitoring with customizable thresholds
+- **Performance Analytics**: Processing latency, throughput, error rate, and token usage tracking
+- **Pipeline Visualization**: End-to-end flow monitoring from Gmail to AI insights
 
 ## 📋 Prerequisites
 

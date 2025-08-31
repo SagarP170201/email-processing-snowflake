@@ -1,0 +1,31 @@
+{
+  "email_type": "gmail_api",
+  "payload": {
+    "headers": [
+      {
+        "name": "From",
+        "value": "sarah.johnson@snowflake.com"
+      },
+      {
+        "name": "Subject",
+        "value": "URGENT: System Performance Issue - Immediate Review Needed"
+      },
+      {
+        "name": "Date",
+        "value": "Fri, 30 Aug 2024 16:45:00 -0700"
+      }
+    ],
+    "parts": [
+      {
+        "body": {
+          "data": "Hi Team, We're experiencing performance degradation in our production systems. Database query times have increased by 40% since this morning. Need immediate review of recent changes and resource allocation. Please join emergency call at 5:00 PM today. Critical systems affected: Customer portal, analytics dashboard, reporting pipeline. Escalation to management if not resolved by EOD. Thanks, Sarah Johnson, DevOps Lead"
+        }
+      }
+    ]
+  },
+  "internalDate": "1693427100000",
+  "threadId": "demo_thread_002",
+  "messageId": "demo_msg_002",
+  "fetched_timestamp": "2024-08-31T19:45:00Z",
+  "source": "gmail_api_demo"
+}

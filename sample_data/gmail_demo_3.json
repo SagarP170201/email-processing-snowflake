@@ -1,0 +1,31 @@
+{
+  "email_type": "gmail_api",
+  "payload": {
+    "headers": [
+      {
+        "name": "From",
+        "value": "marketing@snowflake.com"
+      },
+      {
+        "name": "Subject",
+        "value": "Snowflake Summit 2024 - Registration Now Open"
+      },
+      {
+        "name": "Date",
+        "value": "Fri, 30 Aug 2024 10:15:00 -0700"
+      }
+    ],
+    "parts": [
+      {
+        "body": {
+          "data": "Dear Snowflake Community, We're excited to announce that registration for Snowflake Summit 2024 is now open! Join us for three days of innovation, learning, and networking. Featured sessions include AI/ML advances, data governance best practices, and hands-on workshops. Early bird pricing available until September 15th. Register now at summit.snowflake.com. Looking forward to seeing you there! Best regards, Snowflake Events Team"
+        }
+      }
+    ]
+  },
+  "internalDate": "1693404900000",
+  "threadId": "demo_thread_003",
+  "messageId": "demo_msg_003",
+  "fetched_timestamp": "2024-08-31T19:15:00Z",
+  "source": "gmail_api_demo"
+}

@@ -1,0 +1,31 @@
+{
+  "email_type": "gmail_api",
+  "payload": {
+    "headers": [
+      {
+        "name": "From",
+        "value": "john.smith@snowflake.com"
+      },
+      {
+        "name": "Subject",
+        "value": "Q4 Budget Planning Meeting - Action Required"
+      },
+      {
+        "name": "Date",
+        "value": "Fri, 30 Aug 2024 14:30:00 -0700"
+      }
+    ],
+    "parts": [
+      {
+        "body": {
+          "data": "Hi Sagar, I hope this email finds you well. We need to schedule our Q4 budget planning meeting. Key agenda items include reviewing Q3 spending analysis, discussing Q4 budget allocations, and approving new project funding. The meeting is scheduled for November 22, 2024, at 2:00 PM PST in Conference Room A. Please prepare your department's Q3 spending report and Q4 budget requests. This is critical for our financial planning. Please confirm your attendance. Best regards, John Smith, Finance Director"
+        }
+      }
+    ]
+  },
+  "internalDate": "1693420200000",
+  "threadId": "demo_thread_001",
+  "messageId": "demo_msg_001",
+  "fetched_timestamp": "2024-08-31T19:30:00Z",
+  "source": "gmail_api_demo"
+}

@@ -1,0 +1,21 @@
+# Gmail API Connector Dependencies
+google-auth==2.25.2
+google-auth-oauthlib==1.2.0
+google-auth-httplib2==0.2.0
+google-api-python-client==2.110.0
+
+# AWS Dependencies
+boto3==1.34.0
+botocore==1.34.0
+
+# Snowflake Dependencies  
+snowflake-connector-python==3.6.0
+
+# Core utilities
+requests==2.31.0
+python-dotenv==1.0.0
+
+# Optional: For AWS Lambda deployment
+# Add these only if deploying to Lambda:
+# awslambdaric==2.0.7  
+# aws-lambda-powertools==2.30.0

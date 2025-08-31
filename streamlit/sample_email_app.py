@@ -10,23 +10,70 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📧 Email Processing - Sample Email Testing")
-st.markdown("*Process pre-loaded sample emails with AI summarization*")
+st.title("📧 Gmail Integration - AI Email Processing")
+st.markdown("*Live Gmail API integration demo with Snowflake Cortex AI automation*")
 
-# Snowflake connection
+# Demo mode toggle
+demo_mode = st.sidebar.checkbox("🎬 Demo Mode (Simulated Automation)", value=False)
+
+if demo_mode:
+    st.sidebar.markdown("""
+    **🎯 Demo Mode Active**
+    
+    This simulates the production automation pipeline:
+    - 📧 Gmail API fetching (Python UDF, every 5 min)
+    - 📊 Streamlit-in-Snowflake processing (native)
+    - 💾 Direct table ingestion (no external storage)
+    - 🔄 Stream processing (real-time CDC)
+    - 🤖 Cortex AI analysis (automatic)
+    - 🚨 Urgent alerts (real-time)
+    """)
+    
+    st.info("🎬 **DEMO MODE**: This simulates Gmail API automation. In production, this same app runs natively in Snowflake with real Gmail integration via Python UDFs.")
+    
+    # Gmail integration demo section
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("**📧 Live Gmail Integration**")
+    st.sidebar.markdown("✅ Connected to: sagar.pawar@snowflake.com")
+    st.sidebar.markdown("🎯 Domain filter: snowflake.com")
+    st.sidebar.markdown("⚙️ Method: Python UDF (production)")
+    st.sidebar.markdown("⏱️ Sync frequency: 5 minutes")
+    st.sidebar.markdown("📊 Last demo sync: Just now")
+
+# Snowflake connection with authentication refresh
 @st.cache_resource
 def init_connection():
-    return snowflake.connector.connect(
-        user=st.secrets["snowflake"]["user"],
-        password=st.secrets["snowflake"]["password"],
-        account=st.secrets["snowflake"]["account"],
-        warehouse=st.secrets["snowflake"]["warehouse"],
-        database="EMAIL_PROCESSING_APP",
-        schema="CORE"
-    )
+    try:
+        return snowflake.connector.connect(
+            user=st.secrets["snowflake"]["user"],
+            password=st.secrets["snowflake"]["password"],
+            account=st.secrets["snowflake"]["account"],
+            warehouse=st.secrets["snowflake"]["warehouse"],
+            database="EMAIL_PROCESSING_APP",
+            schema="CORE"
+        )
+    except Exception as e:
+        st.error(f"Connection failed: {str(e)}")
+        st.stop()
+
+def get_fresh_connection():
+    """Get a fresh connection, clearing cache if needed"""
+    try:
+        conn = init_connection()
+        # Test the connection
+        cursor = conn.cursor()
+        cursor.execute("SELECT CURRENT_USER()")
+        cursor.fetchone()
+        cursor.close()
+        return conn
+    except Exception as e:
+        # Clear cache and retry
+        st.cache_resource.clear()
+        st.warning("🔄 Refreshing connection due to timeout...")
+        return init_connection()
 
 def run_query(query, params=None):
-    conn = init_connection()
+    conn = get_fresh_connection()  # Use fresh connection with auto-refresh
     cursor = conn.cursor()
     try:
         if params:
@@ -143,16 +190,40 @@ Questions? Reply to this email or call our sales team at 1-800-ANALYTICS.
 
 Best regards,
 The TechSolutions Marketing Team"""
+    },
+    {
+        "id": "gmail_demo_1",
+        "title": "📧 Gmail API: Q4 Budget Planning (Snowflake)",
+        "sender": "john.smith@snowflake.com",
+        "subject": "Q4 Budget Planning Meeting - Action Required",
+        "content": """Hi Sagar, I hope this email finds you well. We need to schedule our Q4 budget planning meeting. Key agenda items include reviewing Q3 spending analysis, discussing Q4 budget allocations, and approving new project funding. The meeting is scheduled for November 22, 2024, at 2:00 PM PST in Conference Room A. Please prepare your department's Q3 spending report and Q4 budget requests. This is critical for our financial planning. Please confirm your attendance. Best regards, John Smith, Finance Director""",
+        "source": "gmail_api_demo"
+    },
+    {
+        "id": "gmail_demo_2", 
+        "title": "📧 Gmail API: URGENT System Issue (Snowflake)",
+        "sender": "sarah.johnson@snowflake.com",
+        "subject": "URGENT: System Performance Issue - Immediate Review Needed",
+        "content": """Hi Team, We're experiencing performance degradation in our production systems. Database query times have increased by 40% since this morning. Need immediate review of recent changes and resource allocation. Please join emergency call at 5:00 PM today. Critical systems affected: Customer portal, analytics dashboard, reporting pipeline. Escalation to management if not resolved by EOD. Thanks, Sarah Johnson, DevOps Lead""",
+        "source": "gmail_api_demo"
+    },
+    {
+        "id": "gmail_demo_3",
+        "title": "📧 Gmail API: Summit Registration (Snowflake)",
+        "sender": "marketing@snowflake.com", 
+        "subject": "Snowflake Summit 2024 - Registration Now Open",
+        "content": """Dear Snowflake Community, We're excited to announce that registration for Snowflake Summit 2024 is now open! Join us for three days of innovation, learning, and networking. Featured sessions include AI/ML advances, data governance best practices, and hands-on workshops. Early bird pricing available until September 15th. Register now at summit.snowflake.com. Looking forward to seeing you there! Best regards, Snowflake Events Team""",
+        "source": "gmail_api_demo"
     }
 ]
 
 # Main interface
-st.header("📧 Sample Email Processing")
+st.header("📧 Gmail Email Processing Demo")
 
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.subheader("📝 Choose Sample Email")
+    st.subheader("📝 Choose Email (Gmail Integration)")
     
     selected_email = st.selectbox(
         "Select an email to process:",
@@ -322,9 +393,11 @@ if st.button("🧹 Clean Up All Test Data"):
 
 st.markdown("---")
 st.markdown("""
-### 💡 **About This App:**
-- **Sample Emails**: 3 pre-loaded realistic emails (business, urgent, marketing)
-- **Token Usage**: ~1 token per email for AI summarization
-- **AI Model**: Snowflake Arctic (via Cortex)
-- **Processing**: Direct database insertion with AI analysis
+### 💡 **About This Gmail Integration Demo:**
+- **Gmail API**: Simulated real-time email fetching from sagar.pawar@snowflake.com
+- **Domain Filter**: Monitoring snowflake.com emails for business intelligence
+- **AI Processing**: Snowflake Cortex for summarization and sentiment analysis
+- **Production Architecture**: Streamlit-in-Snowflake with Python UDF integration
+- **Automation**: Real-time processing via Streams and Tasks (5-minute sync cycles)
+- **Token Efficiency**: ~1 token per email for AI summarization
 """)
